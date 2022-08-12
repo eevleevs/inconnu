@@ -36,7 +36,7 @@ server
   })
 
   .get('/authenticated', async (req, res) => {
-    const {memberOf, receiver, ...state} = JSON.parse(req.query.state)
+    const {jwtExpirationTime, memberOf, receiver, ...state} = JSON.parse(req.query.state)
     const acquired = await cca.acquireTokenByCode({code: req.query.code, redirectUri, scopes})
     const payload: any = {username: acquired?.account?.username?.toLowerCase()}
     if (memberOf) {
@@ -52,7 +52,7 @@ server
     }
     const jwt = await new SignJWT(payload)
       .setProtectedHeader({alg: 'HS256'})
-      .setExpirationTime(Deno.env.get('jwtExpirationTime') || '1w')
+      .setExpirationTime(jwtExpirationTime || Deno.env.get('jwtExpirationTime') || '1w')
       .sign(jwk)
     res.redirect(receiver + '?' + encode({...state, ...payload, jwt}))
   })

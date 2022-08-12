@@ -28,10 +28,11 @@ Inconnu runs on [Deno](https://deno.land/) and connects to Microsoft Azure for a
 
 To authenticate redirect the client to get `/authenticate`, which redirects to Microsoft where the user is identified, which redirects to `/authenticated` where the tokens are generated, which redirects back to the requesting server. Query parameters to `/authenticate` are:
 
-| parameter | required | format                            | description                                                |
-| --------- | -------- | --------------------------------- | ---------------------------------------------------------- |
-| receiver  | yes      | url                               | final address that will receive the authentication results |
-| memberOf  | no       | comma separated list of AD groups | returns input list filtered by user membership             |
+| parameter         | required | format                            | description                                                |
+| ----------------- | -------- | --------------------------------- | ---------------------------------------------------------- |
+| jwtExpirationTime | no       | duration (e.g. 2h, 30d, 2w)       | custom expiration time for tokens                          |
+| receiver          | yes      | url                               | final address that will receive the authentication results |
+| memberOf          | no       | comma separated list of AD groups | returns input list filtered by user membership             |
 
 Using `memberOf` provokes a second call to Microsoft Graph to retrieve the list of AD groups the user is member of.  
 The final request to the receiver includes query parameters `username`, `jwt`, possibly `memberOf` and any other extra parameter that was provided to `/authenticate`. 

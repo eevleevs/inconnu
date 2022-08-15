@@ -13,16 +13,16 @@ if (!clientId) throw('missing clientId')
 const cca = new CustomClientApplication({auth: {clientId, clientSecret}})
 const jwk = await generateSecret('HS256')
 const scopes = ['user.read', 'directory.read.all']
-const server = opine()
+const app = opine()
 let redirectUri: string
 
-if (Deno.env.get('logging')) server.use((req, _res, next) => {
+if (Deno.env.get('logging')) app.use((req, _res, next) => {
   const item = `${req.method} ${req.url}`
   console.log(item.length>200 ? item.slice(0, 200)+'...' : item)
   next()
 })
 
-server
+app
   .get('/', (_req, res) => res.redirect('https://github.com/eevleevs/inconnu'))
 
   .get('/authenticate', async (req, res) => {

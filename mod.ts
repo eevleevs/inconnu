@@ -47,7 +47,7 @@ app
         .value
         .map((v: any) => v.displayName)
       payload.memberOf = memberOf
-        .split(/,/g)
+        .split(',')
         .filter((group: string) => groups.includes(group))
     }
     const jwt = await new SignJWT(payload)

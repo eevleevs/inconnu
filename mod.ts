@@ -1,6 +1,6 @@
 if ('readTextFileSync' in Deno) await import('https://deno.land/std@0.151.0/dotenv/load.ts')
 import {encode} from 'https://deno.land/std@0.151.0/node/querystring.ts'
-import {ConfidentialClientApplication} from 'https://deno.land/x/azure_msal_deno@v1.1.0/mod.ts'
+import {ConfidentialClientApplication} from 'https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts'
 import {generateSecret, jwtVerify, SignJWT} from "https://deno.land/x/jose@v4.8.3/index.ts"
 import {opine} from 'https://deno.land/x/opine@2.2.0/mod.ts'
 

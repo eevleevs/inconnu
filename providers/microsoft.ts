@@ -1,6 +1,6 @@
 import {ConfidentialClientApplication} from 'https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts'
-import {encode, Router, SignJWT} from '../deps.ts'
-import jwk from '../jwk.ts'
+import {encode, Router} from '../deps.ts'
+import {signJWT} from '../jwt.ts'
 
 class CustomClientApplication extends ConfidentialClientApplication {
   getLogoutUrl = () => this.config.auth.authority + 'oauth2/v2.0/logout'
@@ -38,12 +38,7 @@ export const router = new Router()
         .split(',')
         .filter((group: string) => groups.includes(group))
     }
-    const jwt = await new SignJWT(payload)
-      .setProtectedHeader({alg: 'HS256'})
-      .setExpirationTime(jwtExpirationTime 
-        || Deno.env.get('INCONNU_JWT_EXPIRATION_TIME') 
-        || '1w')
-      .sign(jwk)
+    const jwt = await signJWT(payload, jwtExpirationTime)
     res.redirect(receiver + '?' + encode({...state, ...payload, jwt}))
   })
 

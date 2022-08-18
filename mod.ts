@@ -1,6 +1,6 @@
 if ('readTextFileSync' in Deno) await import('https://deno.land/std@0.151.0/dotenv/load.ts')
-import {jwtVerify, opine} from './deps.ts'
-import jwk from './jwk.ts'
+import {opine} from './deps.ts'
+import {verifyJWT} from './jwt.ts'
 
 const app = opine()
 const port = parseInt(Deno.env.get('INCONNU_LISTEN_PORT') || '3001')
@@ -31,7 +31,7 @@ for await (const file of Deno.readDir('providers')) {
 // generic routes
 app
   .get('/', (_req, res) => res.redirect('https://github.com/eevleevs/inconnu'))
-  .get('/verify/:jwt', (req, res) => jwtVerify(req.params.jwt, jwk)
+  .get('/verify/:jwt', (req, res) => verifyJWT(req.params.jwt)
     .then(result => res.json(result.payload))
     .catch(err => res.setStatus(400).send(err))
   )

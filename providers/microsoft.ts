@@ -1,6 +1,7 @@
 import {ConfidentialClientApplication} from 'https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts'
 import {encode, Router} from '../deps.ts'
 import {signJWT} from '../jwt.ts'
+import {origin} from '../origin.ts'
 
 class CustomClientApplication extends ConfidentialClientApplication {
   getLogoutUrl = () => this.config.auth.authority + 'oauth2/v2.0/logout'
@@ -16,8 +17,7 @@ export const router = new Router()
   .get('/authenticate', async (req, res) => {
     if (!req.query.receiver) return res.setStatus(400).send('missing receiver')
     res.redirect(await cca.getAuthCodeUrl({
-      redirectUri: redirectUri ??= 
-        `http${req.get('host')?.match(/^localhost:/) ? '' : 's'}://${req.get('host')}/microsoft/authenticated`,
+      redirectUri: redirectUri ??= origin(req) + '/microsoft/authenticated',
       scopes,
       state: JSON.stringify(req.query)
     }))
@@ -30,7 +30,7 @@ export const router = new Router()
     if (memberOf) {
       const groups = (await (await fetch(
         'https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName&$top=999',
-        {headers: {Authorization: 'Bearer ' + acquired?.accessToken}}
+        {headers: {authorization: 'Bearer ' + acquired?.accessToken}}
       )).json())
         .value
         .map((v: any) => v.displayName)

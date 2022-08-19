@@ -1,7 +1,8 @@
 # Intro
 
-Inconnu, or [Nelma](https://en.wikipedia.org/wiki/Nelma) is a fish of the family Salmonidae. Despite its name meaning *unknown*, it will help you recognise the users of your web application by use of [Microsoft Authentication Library](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview).  
-Inconnu runs on [Deno](https://deno.land/) and features a modular design that will allow to add more identity providers.
+Inconnu, or [Nelma](https://en.wikipedia.org/wiki/Nelma) is a fish of the family Salmonidae. Despite its name meaning *unknown*, it will help you recognise the users of your web application by use of [Microsoft Authentication Library](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview) or [Okta](https://www.okta.com/).  
+
+Inconnu runs on [Deno](https://deno.land/) and features a modular design allowing to add more identity providers.
 
 # Running
 
@@ -15,24 +16,22 @@ Inconnu runs on [Deno](https://deno.land/) and features a modular design that wi
 
 ## Generic
 
-| env var                     | description             | default       |
-| --------------------------- | ----------------------- | ------------- |
-| INCONNU_JWT_EXPIRATION_TIME | token expiration time   | 1w (one week) |
-| INCONNU_LISTEN_PORT         | HTTP server listen port | 3001          |
-| INCONNU_LOGGING             | enable request logging  | (not active)  |
+| env var                | description             | default       |
+| ---------------------- | ----------------------- | ------------- |
+| INCONNU_JWT_EXPIRATION | token expiration time   | 1w (one week) |
+| INCONNU_LOG            | enable request logging  | (not active)  |
+| INCONNU_PORT           | HTTP server listen port | 3001          |
 
 ## Providers
 
-Providers are activated by setting the corresponding environment variable containing application credentials.
+Provider modules are activated by setting the corresponding environment variable containing the application credentials.
 
-### Microsoft
+| env var           | format                                        |
+| ----------------- | --------------------------------------------- |
+| INCONNU_MICROSOFT | Azure_application_ID:Azure_application_secret |
+| INCONNU_OKTA      | Okta_domain:Okta_client_ID:Okta_client_secret |
 
-
-| env var           | description                   |
-| ----------------- | ----------------------------- |
-| INCONNU_MICROSOFT | Azure_app_id:Azure_app_secret |
-
-A corresponding Azure application must be configured through [App registrations](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) as web application and accept a `https://<host>/microsoft/authenticated` redirect URI.
+A corresponding web application must be configured on the provider and accept a `https://<inconnu_host>/<provider>/authenticated` redirect URI.
 
 # Usage
 
@@ -40,11 +39,11 @@ A corresponding Azure application must be configured through [App registrations]
 
 To authenticate redirect the client to get `/<provider>/authenticate` (e.g. `/microsoft/authenticate`), which redirects to the authentication provider where the user is identified, which redirects to `/<provider>/authenticated` where the tokens are generated, which redirects back to the requesting server. Query parameters to `/<provider>/authenticate` are:
 
-| parameter         | provider  | required | format                      | description                                                |
-| ----------------- | --------- | -------- | --------------------------- | ---------------------------------------------------------- |
-| jwtExpirationTime | all       | no       | duration (e.g. 2h, 30d, 2w) | custom expiration time for tokens                          |
-| receiver          | all       | yes      | url                         | final address that will receive the authentication results |
-| memberOf          | microsoft | no       | group1,group2,...           | returns input list filtered by user membership             |
+| parameter         | provider  | format                      | description                                          |
+| ----------------- | --------- | --------------------------- | ---------------------------------------------------- |
+| jwtExpirationTime | all       | duration (e.g. 2h, 30d, 2w) | custom expiration time for tokens                    |
+| memberOf          | microsoft | group1,group2,...           | returns input list filtered by user membership       |
+| receiver          | all       | url                         | address that will receive the authentication results |
 
 Using `memberOf` for `microsoft` provider provokes a second call to Microsoft Graph to retrieve the list of AD groups the user is member of. 
 The final request to the receiver includes query parameters `username`, `jwt`, possibly `memberOf` and any other extra parameter that was provided to `/<provider>/authenticate`. 

@@ -1,6 +1,6 @@
 # Intro
 
-Inconnu, or [Nelma](https://en.wikipedia.org/wiki/Nelma) is a fish of the family Salmonidae. Despite its name meaning *unknown*, it will help you recognise the users of your web application by use of [Microsoft Authentication Library](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview) or [Okta](https://www.okta.com/).  
+Inconnu, or [Nelma](https://en.wikipedia.org/wiki/Nelma) is a fish of the family Salmonidae. Despite its name meaning *unknown*, it will help you recognise the users of your application by use of [Microsoft Authentication Library](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview) or [Okta](https://www.okta.com/). It acts as an intermediary towards different identity providers, simplifying and standardising their interface. It is particularly useful in a setup where an organisation maintains several applications that use external authentication but not authorisation, so that a single provider configuration can be shared.
 
 Inconnu runs on [Deno](https://deno.land/) and features a modular design allowing to add more identity providers.
 

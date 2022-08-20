@@ -50,7 +50,7 @@ The final request to the receiver includes query parameters `username`, `jwt`, p
 
 ## Verifying a previously generated token
 
-The [JWT token](https://en.wikipedia.org/wiki/JSON_Web_Token) contains an encoded and signed version of the rest of the data, plus an expiration time. It can be stored on a client and used for successive stateless authentication. To verify a token, get `/verify/:jwt`, where `:jwt` is the token. If the verification is successful, returns the decoded data. If not, returns an error message and an HTTP status code 400.
+The [JWT token](https://en.wikipedia.org/wiki/JSON_Web_Token) contains an encoded and signed version of the rest of the data, plus an expiration time. It can be stored on a client and used for successive stateless authentication. To verify a token, get `/verify?jwt=<token>` or `/<provider>/verify?jwt=<token>`. If the verification is successful, returns the decoded data. If not, returns an error message and an HTTP status code 400.
 
 <u>Token verification should be preferred</u> if available, because it is performed much faster internally and does not require contacting the identity provider again.
 

@@ -1,4 +1,4 @@
-import {Provider} from '../mod.ts'
+import { Provider } from '../mod.ts'
 
 const [domain, clientId, clientSecret] = (Deno.env.get('INCONNU_OKTA') ?? '').split(':')
 const issuer = `https://${domain}/oauth2/default`

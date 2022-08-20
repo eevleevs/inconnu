@@ -1,11 +1,7 @@
-if ('readTextFileSync' in Deno) 
-  await import('https://deno.land/std@0.151.0/dotenv/load.ts')
-import {encode}
-  from 'https://deno.land/std@0.151.0/node/querystring.ts'
-import {generateSecret, JWTPayload, jwtVerify, SignJWT} 
-  from 'https://deno.land/x/jose@v4.9.0/index.ts'
-import {opine, OpineRequest, OpineResponse, Router}
-  from 'https://deno.land/x/opine@2.2.0/mod.ts'
+if ('readTextFileSync' in Deno) await import('https://deno.land/std@0.151.0/dotenv/load.ts')
+import { encode } from 'https://deno.land/std@0.151.0/node/querystring.ts'
+import { generateSecret, JWTPayload, jwtVerify, SignJWT } from 'https://deno.land/x/jose@v4.9.0/index.ts'
+import { opine, OpineRequest, OpineResponse, Router } from 'https://deno.land/x/opine@2.2.0/mod.ts'
 
 export interface Provider {
   getAuthCodeUrl(query: object, origin: string): string | Promise<string>

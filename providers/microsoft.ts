@@ -1,5 +1,5 @@
-import {ConfidentialClientApplication} from 'https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts'
-import {Provider} from '../mod.ts'
+import { ConfidentialClientApplication } from 'https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts'
+import { Provider } from '../mod.ts'
 
 class CustomClientApplication extends ConfidentialClientApplication {
   getLogoutUrl = () => this.config.auth.authority + 'oauth2/v2.0/logout'

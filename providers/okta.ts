@@ -5,7 +5,7 @@ const issuer = `https://${domain}/oauth2/default`
 let redirectUri: string
 
 export const provider: Provider = {
-  getAuthCodeUrl: (query, origin) => `${issuer}/v1/authorize?client_id=${clientId}&response_type=code&scope=openid%20email&redirect_uri=${redirectUri ??= origin + '/okta/authenticated'}&state=${JSON.stringify(query)}`,
+  getAuthCodeUrl: async (query, origin) => `${issuer}/v1/authorize?client_id=${clientId}&response_type=code&scope=openid%20email&redirect_uri=${redirectUri ??= origin + '/okta/authenticated'}&state=${JSON.stringify(query)}`,
   getLogoutUrl: () => `${issuer}/login/signout`,
   getPayload: async query => {
     const acquired = await (await fetch(`${issuer}/v1/token`, {

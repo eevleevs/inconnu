@@ -4,7 +4,7 @@ import { generateSecret, JWTPayload, jwtVerify, SignJWT } from 'https://deno.lan
 import { opine, OpineRequest, OpineResponse, Router } from 'https://deno.land/x/opine@2.2.0/mod.ts'
 
 export interface Provider {
-  getAuthCodeUrl(query: object, origin: string): string | Promise<string>
+  getAuthCodeUrl(query: object, origin: string): Promise<string>
   getLogoutUrl(): string
   getPayload(query: any, state: any): Promise<JWTPayload>
 }
@@ -50,7 +50,7 @@ for await (const file of Deno.readDir('providers')) {
     })
     .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))
     .get('/verify', verify)
-)
+  )
   console.log(`${name} provider enabled`)
 }
 

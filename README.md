@@ -39,11 +39,11 @@ A corresponding web application must be configured on the provider and accept a 
 
 To authenticate redirect the client to get `/<provider>/authenticate` (e.g. `/microsoft/authenticate`), which redirects to the authentication provider where the user is identified, which redirects to `/<provider>/authenticated` where the tokens are generated, which redirects back to the requesting server. Query parameters to `/<provider>/authenticate` are:
 
-| parameter         | provider  | format                      | description                                          |
-| ----------------- | --------- | --------------------------- | ---------------------------------------------------- |
-| jwtExpirationTime | all       | duration (e.g. 2h, 30d, 2w) | custom expiration time for tokens                    |
-| memberOf          | microsoft | group1,group2,...           | returns input list filtered by user membership       |
-| receiver          | all       | url                         | address that will receive the authentication results |
+| parameter     | provider  | format                      | description                                          |
+| ------------- | --------- | --------------------------- | ---------------------------------------------------- |
+| jwtExpiration | all       | duration (e.g. 2h, 30d, 2w) | custom expiration time for tokens                    |
+| memberOf      | microsoft | group1,group2,...           | returns input list filtered by user membership       |
+| receiver      | all       | url                         | address that will receive the authentication results |
 
 Using `memberOf` for `microsoft` provider provokes a second call to Microsoft Graph to retrieve the list of AD groups the user is member of. 
 The final request to the receiver includes query parameters `username`, `jwt`, possibly `memberOf` and any other extra parameter that was provided to `/<provider>/authenticate`. 

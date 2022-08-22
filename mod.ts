@@ -36,15 +36,12 @@ for await (const file of Deno.readDir('providers')) {
       )
     ))
     .get('/authenticated', async (req, res) => {
-      const {jwtExpiration, receiver, ...state} = JSON.parse(req.query.state)
+      const {receiver, ...state} = JSON.parse(req.query.state)
       const payload = await provider.getPayload(req.query, state)
       if (!receiver) return res.json(payload)
       const jwt = await new SignJWT(payload)
         .setProtectedHeader({alg: 'HS256'})
-        .setExpirationTime(jwtExpiration
-          || Deno.env.get('INCONNU_JWT_EXPIRATION') 
-          || '1w'
-        )
+        .setExpirationTime(Deno.env.get('INCONNU_JWT_EXPIRATION') || '1w')
         .sign(jwk)
       res.redirect(receiver + '?' + encode({...state, ...payload, jwt}))
     })

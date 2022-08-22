@@ -41,7 +41,6 @@ To authenticate redirect the client to get `/<provider>/authenticate` (e.g. `/mi
 
 | parameter     | provider  | format                      | description                                          |
 | ------------- | --------- | --------------------------- | ---------------------------------------------------- |
-| jwtExpiration | all       | duration (e.g. 2h, 30d, 2w) | custom expiration time for tokens                    |
 | memberOf      | microsoft | group1,group2,...           | returns input list filtered by user membership       |
 | receiver      | all       | url                         | address that will receive the authentication results |
 

@@ -11,6 +11,7 @@ export interface Provider {
 
 const app = opine()
 const jwk = await generateSecret('HS256')
+const logService = Deno.env.get('INCONNU_LOG_SERVICE')
 const port = parseInt(Deno.env.get('INCONNU_PORT') || '3001')
 let origin: string
 
@@ -18,9 +19,18 @@ const verify = (req: OpineRequest, res: OpineResponse) => jwtVerify(req.query.jw
   .then(result => res.json(result.payload))
   .catch(err => res.setStatus(400).send(err))
 
-// method and route logging
-if (Deno.env.get('INCONNU_LOG')) app.use((req, _res, next) => {
+// log request method and route to the console
+if (Deno.env.get('INCONNU_LOG_CONSOLE')) app.use((req, _res, next) => {
   console.log(`${req.method} ${req.url}`)
+  next()
+})
+
+// post content of the "log" query parameter to logService
+if (logService) app.use((req, _res, next) => {
+  if (req.query.log) fetch(logService, {
+    method: 'post',
+    body: req.query.log,
+  })
   next()
 })
 

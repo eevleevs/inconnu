@@ -17,9 +17,10 @@ export const provider: Provider = {
     state: JSON.stringify(query)
   }),
   getLogoutUrl: cca.getLogoutUrl,
-  getPayload: async (query, state) => {
+  getPayload: async query => {
     const acquired = await cca.acquireTokenByCode({code: query.code, redirectUri, scopes})
     const payload: any = {username: acquired?.account?.username?.toLowerCase()}
+    const state = JSON.parse(query.state)
     if (state.memberOf) {
       const groups = (await (await fetch(
         'https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName&$top=999',

@@ -4,7 +4,7 @@ Inconnu, or [Nelma](https://en.wikipedia.org/wiki/Nelma) is a fish of the family
 
 Inconnu runs on [Deno](https://deno.land/) and features a modular design allowing to add more identity providers.
 
-# Running
+<!-- # Running
 
 ### Locally
 ```deno run --allow-read --allow-env --allow-net mod.ts```
@@ -39,10 +39,11 @@ A corresponding web application must be configured on the provider and accept a 
 
 To authenticate redirect the client to get `/<provider>/authenticate` (e.g. `/microsoft/authenticate`), which redirects to the authentication provider where the user is identified, which redirects to `/<provider>/authenticated` where the tokens are generated, which redirects back to the requesting server. Query parameters to `/<provider>/authenticate` are:
 
-| parameter     | provider  | format                      | description                                          |
-| ------------- | --------- | --------------------------- | ---------------------------------------------------- |
-| memberOf      | microsoft | group1,group2,...           | returns input list filtered by user membership       |
-| receiver      | all       | url                         | address that will receive the authentication results |
+| parameter | provider  | format            | description                                          |
+| --------- | --------- | ----------------- | ---------------------------------------------------- |
+| memberOf  | microsoft | group1,group2,... | returns input list filtered by user membership       |
+| receiver  | all       | url               | address that will receive the authentication results |
+| skipJwt   | all       | any               | if present, do not generate JWT                      |
 
 Using `memberOf` for `microsoft` provider provokes a second call to Microsoft Graph to retrieve the list of AD groups the user is member of. 
 The final request to the receiver includes query parameters `username`, `jwt`, possibly `memberOf` and any other extra parameter that was provided to `/<provider>/authenticate`. 
@@ -57,4 +58,4 @@ Note: the `jwt`s, are based on a random secret generated at application start. E
 
 ## Logging out
 
-Logging out the browser from the authentication service can be obtained by getting `/<provider>/logout`, which redirects to the appropriate page. Note that this <u>does not invalidate</u> tokens stored on clients, which must be additionally deleted.
+Logging out the browser from the authentication service can be obtained by getting `/<provider>/logout`, which redirects to the appropriate page. Note that this <u>does not invalidate</u> tokens stored on clients, which must be additionally deleted. -->

@@ -24,7 +24,7 @@ export class ExpiringMap extends Map {
     return super.get(key)?.at(0)
   }
 
-  getAndDelete(key: any) {
+  pop(key: any) {
     const value = this.get(key)
     super.delete(key)
     return value

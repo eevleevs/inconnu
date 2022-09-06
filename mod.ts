@@ -13,7 +13,7 @@ export interface Provider {
 
 const app = opine()
 const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') || '1w'
-const hub = Deno.env.get('INCONNU_HUB')
+const hub = Deno.env.get('INCONNU_HUB_URL')
 const jwk = await generateSecret('HS256')
 const port = 3001
 const secrets = new ExpiringMap(30000)

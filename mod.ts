@@ -81,18 +81,21 @@ if (hub) {
     names.push(name)
     const provider: Provider = (await import('./providers/' + file.name)).provider
     app.use(`/${name}`, new Router()
-      .get('/authenticate', async (req, res) => res.redirect(
-        await provider.getAuthCodeUrl(req.query, origin(req))
-      ))
+      .get('/authenticate', async (req, res) => {
+        const secret = crypto.randomUUID()
+        secrets.set(secret, true)
+        res.redirect(await provider.getAuthCodeUrl({...req.query, secret}, origin(req)))
+      })
       .get('/authenticated', (req, res) => {
+        const {receiver, secret, ...state} = JSON.parse(req.query.state)
+        if (!secrets.delete(secret)) return res.sendStatus(401)
         const code = crypto.randomUUID()
         secrets.set(code, req.query)
-        const {receiver, ...state} = JSON.parse(req.query.state)
         res.redirect((receiver || `/${name}/redeem`) + '?' + encode({...state, code}))
       })
       .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))
       .get('/redeem', async (req, res) => {
-        const query = secrets.getAndDelete(req.query.code)
+        const query = secrets.pop(req.query.code)
         if (!query) return res.sendStatus(401)
         const payload = await provider.getPayload(query)
         res.json({

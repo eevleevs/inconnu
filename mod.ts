@@ -43,7 +43,7 @@ if (Deno.env.get('INCONNU_LOG')) app.use((req, _res, next) => {
 
 if (hub) {
   console.log(`satellite mode, using hub ${hub}`)
-  app.use('/inconnu', new Router()
+  app.use(Deno.env.get('INCONNU_SAT_PATH') || '/inconnu', new Router()
     .get('/authenticate', (req, res) => {
       const secret = crypto.randomUUID()
       secrets.set(secret, true)

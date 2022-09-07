@@ -11,7 +11,7 @@ Inconnu runs on [Deno](https://deno.land/) and features a modular design allowin
 ```deno run --allow-read --allow-env --allow-net mod.ts```
 
 ### In a container
-```docker run -d -p 3001:3001 -e <config> eevleevs/inconnu```
+```docker run -d -p 3001:3001 -e <config> ivlivs/inconnu```
 
 
 # Configuration

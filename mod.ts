@@ -13,7 +13,7 @@ export interface Provider {
 
 const app = opine()
 const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') || '1w'
-const hub = Deno.env.get('INCONNU_HUB_URL')
+const hubUrl = Deno.env.get('INCONNU_HUB_URL')
 const jwk = await generateSecret('HS256')
 const port = 3001
 const secrets = new ExpiringMap(30000)
@@ -41,21 +41,21 @@ if (Deno.env.get('INCONNU_LOG')) app.use((req, _res, next) => {
   next()
 })
 
-if (hub) {
-  console.log(`satellite mode, using hub ${hub}`)
+if (hubUrl) {
+  console.log(`satellite mode, using hub ${hubUrl}`)
   app.use(Deno.env.get('INCONNU_SAT_PATH') || '/inconnu', new Router()
     .get('/authenticate', (req, res) => {
-      const secret = crypto.randomUUID()
-      secrets.set(secret, true)
-      res.redirect(`${hub}/authenticate?` + encode({
+      const satSecret = crypto.randomUUID()
+      secrets.set(satSecret, true)
+      res.redirect(`${hubUrl}/authenticate?` + encode({
         ...req.query,
         receiver: origin(req) + '/inconnu/authenticated',
-        secret,
+        satSecret,
       }))
     })
     .get('/authenticated', async (req, res) => {
-      if (!secrets.delete(req.query.secret)) return res.sendStatus(401)
-      const result = await fetch(`${hub}/redeem?` + encode(req.query))
+      if (!secrets.delete(req.query.satSecret)) return res.sendStatus(401)
+      const result = await fetch(`${hubUrl}/redeem?` + encode(req.query))
       if (!result.ok) return res.sendStatus(401)
       const jwt = await sign(await result.json())
       res.cookie({
@@ -69,7 +69,7 @@ if (hub) {
     })
     .get('/logout', (_req, res) => res
       .clearCookie('inconnu-auth')
-      .redirect(`${hub}/logout`)
+      .redirect(`${hubUrl}/logout`)
     )
     .get('/verify', verify)
   )

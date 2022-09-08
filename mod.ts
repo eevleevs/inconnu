@@ -42,7 +42,6 @@ if (Deno.env.get('INCONNU_LOG')) app.use((req, _res, next) => {
 })
 
 if (hubUrl) {
-  console.log(`satellite mode, using hub ${hubUrl}`)
   app.use(Deno.env.get('INCONNU_SAT_PATH') || '/inconnu', new Router()
     .get('/authenticate', (req, res) => {
       const satSecret = crypto.randomUUID()
@@ -73,6 +72,7 @@ if (hubUrl) {
     )
     .get('/verify', verify)
   )
+  console.log(`satellite mode, using hub ${hubUrl}`)
 } else {
   const names = []
   for await (const file of Deno.readDir('providers')) {

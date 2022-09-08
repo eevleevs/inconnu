@@ -87,7 +87,7 @@ if (hubUrl) {
         res.redirect(await provider.getAuthCodeUrl({...req.query, hubSecret}, origin(req)))
       })
       .get('/authenticated', (req, res) => {
-        const {receiver, hubSecret, ...state} = JSON.parse(req.query.state)
+        const {hubSecret, receiver, ...state} = JSON.parse(req.query.state)
         if (!secrets.delete(hubSecret)) return res.sendStatus(401)
         const code = crypto.randomUUID()
         secrets.set(code, req.query)

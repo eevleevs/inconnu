@@ -82,13 +82,13 @@ if (hubUrl) {
     const provider: Provider = (await import('./providers/' + file.name)).provider
     app.use(`/${name}`, new Router()
       .get('/authenticate', async (req, res) => {
-        const secret = crypto.randomUUID()
-        secrets.set(secret, true)
-        res.redirect(await provider.getAuthCodeUrl({...req.query, secret}, origin(req)))
+        const hubSecret = crypto.randomUUID()
+        secrets.set(hubSecret, true)
+        res.redirect(await provider.getAuthCodeUrl({...req.query, hubSecret}, origin(req)))
       })
       .get('/authenticated', (req, res) => {
-        const {receiver, secret, ...state} = JSON.parse(req.query.state)
-        if (!secrets.delete(secret)) return res.sendStatus(401)
+        const {receiver, hubSecret, ...state} = JSON.parse(req.query.state)
+        if (!secrets.delete(hubSecret)) return res.sendStatus(401)
         const code = crypto.randomUUID()
         secrets.set(code, req.query)
         res.redirect((receiver || `/${name}/redeem`) + '?' + encode({...state, code}))

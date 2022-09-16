@@ -54,21 +54,21 @@ In this mode, Inconnu acts as an intermediary between a web application on the s
 
 Sat mode is activated by setting the `INCONNU_HUB_URL` environment variable to the URL of hub+provider, e.g. `https://<hub_url>/<provider>`. Any hub configuration variable is then ignored.
 
-Satellite `<path>` defaults to `/inconnu`, and can be customised with the `INCONNU_SAT_PATH` environment variable.
+`<sat_path>` below defaults to `/inconnu`, and can be customised with the `INCONNU_SAT_PATH` environment variable.
 
 ### Routes
 
-#### `<path>/authenticate`
+#### `<sat_path>/authenticate`
 Redirects to the hub `/authenticate` route. Accepts a `redirect` query parameter with the url to navigate to after the authentication workflow is complete. Other query parameters are forwarded.
 
 
-#### `<path>/authenticated`
+#### `<sat_path>/authenticated`
 Receives a reference code from the hub, redeems it for the authentication data, signs a [JWT](#jwt) and sets it in the `inconnu-auth` cookie accessible from the host.
 
-#### `<path>/logout`
+#### `<sat_path>/logout`
 Clears the `inconnu-auth` cookie and redirects to the hub logout page.
 
-#### `/<path>/verify`
+#### `<sat_path>/verify`
 See [`/verify`](#verify).
 
 
@@ -120,3 +120,4 @@ app.use(async (req, res, next) => {
         redirect: req.url,
     }))
 })
+```

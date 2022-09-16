@@ -41,6 +41,7 @@ if (Deno.env.get('INCONNU_LOG')) app.use((req, _res, next) => {
 })
 
 if (hubUrl) {
+  // satellite setup
   app.use(Deno.env.get('INCONNU_SAT_PATH') || '/inconnu', new Router()
     .get('/authenticate', (req, res) => {
       const satSecret = crypto.randomUUID()
@@ -73,6 +74,7 @@ if (hubUrl) {
   )
   console.log(`satellite mode, using hub ${hubUrl}`)
 } else {
+  // hub setup
   const names = []
   for await (const file of Deno.readDir('providers')) {
     const name = file.name.match(/(.*)\.ts$/)?.at(1)
@@ -108,6 +110,7 @@ if (hubUrl) {
   console.log('hub mode, using ' + names.join(', '))
 }
 
+// generic routes and start
 app
   .get('/', (_req, res) => res.redirect('https://github.com/eevleevs/inconnu'))
   .get('/verify', verify)

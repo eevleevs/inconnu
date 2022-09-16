@@ -1,4 +1,4 @@
-import { decodePayload, Provider } from '../mod.ts'
+import { Provider } from '../mod.ts'
 
 const [domain, clientId, clientSecret] = (Deno.env.get('INCONNU_OKTA') ?? '').split(':')
 const issuer = `https://${domain}/oauth2/default`
@@ -17,5 +17,5 @@ export const provider: Provider = {
       body: `grant_type=authorization_code&redirect_uri=${redirectUri}&code=${query.code}`,
     })
     .then(res => res.json())
-    .then(acquired => ({username: decodePayload(acquired.id_token).email}))
+    .then(acquired => ({username: JSON.parse(atob(acquired.id_token.split('.')[1])).email}))
 }

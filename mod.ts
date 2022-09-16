@@ -19,7 +19,6 @@ const port = 3001
 const secrets = new ExpiringMap(30000)
 
 // common functions
-export const decodePayload = (jwt: string) => JSON.parse(atob(jwt.split('.')[1]))
 const origin = (req: OpineRequest) =>
   `http${req.get('host')?.match(/^localhost:/) ? '' : 's'}://${req.get('host')}`
 const sign = (payload: JWTPayload) => new SignJWT(payload)
@@ -60,7 +59,7 @@ if (hubUrl) {
       res.cookie({
         name: 'inconnu-auth',
         value: jwt,
-        expires: new Date(decodePayload(jwt).exp * 1000),
+        expires: new Date(JSON.parse(atob(jwt.split('.')[1])).exp * 1000),
         httpOnly: true,
         sameSite: 'Lax',
       })

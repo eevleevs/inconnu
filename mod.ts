@@ -28,7 +28,6 @@ const sign = (payload: JWTPayload) => new SignJWT(payload)
 const verify = (req: OpineRequest, res: OpineResponse) => {
   const jwt = req.headers.get('authorization')?.match(/^Bearer (\S+)/)?.at(1)
     ?? getCookies(req.headers)['inconnu-auth']
-  console.log(req.headers.get('authorization'), getCookies(req.headers))
   jwtVerify(jwt, jwk)
     .then(result => res.json(result.payload))
     .catch(err => res.setStatus(401).send(err))

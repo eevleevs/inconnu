@@ -16,7 +16,7 @@ const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') || '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
 const jwk = await generateSecret('HS256')
 const port = 3001
-const secrets = new ExpiringMap(30000)
+const secrets = new ExpiringMap(300000)
 
 // common functions
 const origin = (req: OpineRequest) =>
@@ -99,7 +99,7 @@ if (hubUrl) {
         if (!query) return res.sendStatus(401)
         const payload = await provider.getPayload(query)
         res.json({
-          ...payload, 
+          ...payload,
           ...req.query.jwt && {jwt: await sign(payload)},
         })
       })

@@ -47,10 +47,10 @@ const sign = (payload: JWTPayload) =>
     .setExpirationTime(expiration)
     .sign(jwk)
 
-const setCors = (res: OpineResponse) => {
+const setCors = (res: OpineResponse) =>
   res.set('Access-Control-Allow-Origin', '*')
-  res.set('Access-Control-Allow-Headers', 'Authorization')
-}
+    .set('Access-Control-Allow-Headers', 'Authorization')
+    .set('Access-Control-Allow-Methods', 'GET, OPTIONS')
 
 const verify = (req: OpineRequest, res: OpineResponse) => {
   setCors(res)

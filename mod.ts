@@ -1,21 +1,21 @@
 if ('readTextFileSync' in Deno) {
-  await import('https://deno.land/std@0.153.0/dotenv/load.ts')
+  await import('https://deno.land/std@0.224.0/dotenv/load.ts')
 }
-import { getCookies } from 'https://deno.land/std@0.153.0/http/cookie.ts'
-import { encode } from 'https://deno.land/std@0.153.0/node/querystring.ts'
+import { getCookies } from 'https://deno.land/std@0.224.0/http/cookie.ts'
+import { encode } from 'node:querystring'
 import {
   generateSecret,
   importJWK,
   JWTPayload,
   jwtVerify,
   SignJWT,
-} from 'https://deno.land/x/jose@v4.9.1/index.ts'
+} from 'https://deno.land/x/jose@v5.8.0/index.ts'
 import {
   opine,
   OpineRequest,
   OpineResponse,
   Router,
-} from 'https://deno.land/x/opine@2.3.3/mod.ts'
+} from 'https://deno.land/x/opine@2.3.4/mod.ts'
 import { ExpiringMap } from 'https://deno.land/x/expiring_map@1.0.0/mod.ts'
 
 export interface Provider {

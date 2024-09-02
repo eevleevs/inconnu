@@ -172,7 +172,6 @@ if (hubUrl) {
 
 // generic routes and start
 app
-  .get('/', (_req, res) => res.redirect('https://github.com/eevleevs/inconnu'))
   .get('/verify', verify)
   .options('/verify', verifyOptions)
   .listen({ hostname, port })

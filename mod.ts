@@ -81,6 +81,7 @@ if (hubUrl) {
   app.use(
     Deno.env.get('INCONNU_SAT_PATH') || '/inconnu',
     new Router()
+      .get('/', (_, res) => res.send('Ready'))
       .get('/authenticate', (req, res) => {
         const satSecret = crypto.randomUUID()
         secrets.set(satSecret, true)
@@ -127,6 +128,7 @@ if (hubUrl) {
     app.use(
       `/${name}`,
       new Router()
+        .get('/', (_, res) => res.send('Ready'))
         .get('/authenticate', async (req, res) => {
           const hubSecret = crypto.randomUUID()
           secrets.set(hubSecret, true)

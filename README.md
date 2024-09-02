@@ -113,13 +113,25 @@ See [`/verify`](#verify).
 
 ## Generic
 
-### Environment variables (usable in both modes)
+### Environment variables
 
-| env var                | description             | default                 |
-| ---------------------- | ----------------------- | ----------------------- |
-| INCONNU_JWT_EXPIRATION | token expiration time   | 1w (one week)           |
-| INCONNU_LOG            | enable request logging  | (undefined, not active) |
-| INCONNU_PORT           | HTTP server listen port | 3001                    |
+| env var                 | description           | default       | mode |
+| ----------------------- | --------------------- | ------------- | ---- |
+| INCONNU_JWK             | encryption key        | random        | any  |
+| INCONNU_JWT_EXPIRATION  | token expiration time | 1w (one week) | any  |
+| INCONNU_HOSTNAME        | HTTP server address   | localhost     | any  |
+| INCONNU_LOG             | request logging       | disabled      | any  |
+| INCONNU_PORT            | HTTP server port      | 3001          | any  |
+| INCONNU_USERNAME_FILTER | username filter regex | none          | hub  |
+
+#### Generating a static JWK
+
+```js
+import { exportJWK, generateSecret } from 'jose'
+JSON.stringify(
+    await exportJWK(await generateSecret('HS256', { extractable: true })),
+)
+```
 
 ### Routes
 

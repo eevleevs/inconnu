@@ -28,7 +28,7 @@ export interface Provider {
 const app = opine()
 const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') ?? '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
-const hostname = Deno.env.get('INCONNU_HOSTNAME') ?? 'localhost'
+const hostname = Deno.env.get('INCONNU_HOSTNAME') ?? '0.0.0.0'
 const port = 3001
 const secrets = new ExpiringMap(300000)
 const usernameFilter = Deno.env.get('INCONNU_USERNAME_FILTER') ?? ''

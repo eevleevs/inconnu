@@ -1,7 +1,8 @@
-if ('readTextFileSync' in Deno)
+if ('readTextFileSync' in Deno) {
   await import('https://deno.land/std@0.153.0/dotenv/load.ts')
-import {getCookies} from 'https://deno.land/std@0.153.0/http/cookie.ts'
-import {encode} from 'https://deno.land/std@0.153.0/node/querystring.ts'
+}
+import { getCookies } from 'https://deno.land/std@0.153.0/http/cookie.ts'
+import { encode } from 'https://deno.land/std@0.153.0/node/querystring.ts'
 import {
   generateSecret,
   JWTPayload,
@@ -14,7 +15,7 @@ import {
   OpineResponse,
   Router,
 } from 'https://deno.land/x/opine@2.3.3/mod.ts'
-import {ExpiringMap} from 'https://deno.land/x/expiring_map@1.0.0/mod.ts'
+import { ExpiringMap } from 'https://deno.land/x/expiring_map@1.0.0/mod.ts'
 
 export interface Provider {
   getAuthCodeUrl(query: object, origin: string): Promise<string>
@@ -34,26 +35,26 @@ const origin = (req: OpineRequest) =>
   `http${req.get('host')?.match(/^localhost:/) ? '' : 's'}://${req.get('host')}`
 const sign = (payload: JWTPayload) =>
   new SignJWT(payload)
-    .setProtectedHeader({alg: 'HS256'})
+    .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime(expiration)
     .sign(jwk)
 const verify = (req: OpineRequest, res: OpineResponse) => {
-  const jwt =
-    req.headers
-      .get('authorization')
-      ?.match(/^Bearer (\S+)/)
-      ?.at(1) ?? getCookies(req.headers)['inconnu-auth']
+  const jwt = req.headers
+    .get('authorization')
+    ?.match(/^Bearer (\S+)/)
+    ?.at(1) ?? getCookies(req.headers)['inconnu-auth']
   jwtVerify(jwt, jwk)
-    .then(result => res.json(result.payload))
-    .catch(err => res.setStatus(401).send(err))
+    .then((result) => res.json(result.payload))
+    .catch((err) => res.setStatus(401).send(err))
 }
 
 // method and route logging
-if (Deno.env.get('INCONNU_LOG'))
+if (Deno.env.get('INCONNU_LOG')) {
   app.use((req, _res, next) => {
     console.log(`${req.method} ${req.url}`)
     next()
   })
+}
 
 if (hubUrl) {
   // satellite setup
@@ -86,8 +87,10 @@ if (hubUrl) {
         })
         res.redirect(req.query.redirect || origin(req) + '/inconnu/verify')
       })
-      .get('/logout', (_req, res) =>
-        res.clearCookie('inconnu-auth').redirect(`${hubUrl}/logout`),
+      .get(
+        '/logout',
+        (_req, res) =>
+          res.clearCookie('inconnu-auth').redirect(`${hubUrl}/logout`),
       )
       .get('/verify', verify),
   )
@@ -109,18 +112,18 @@ if (hubUrl) {
           secrets.set(hubSecret, true)
           res.redirect(
             await provider.getAuthCodeUrl(
-              {...req.query, hubSecret},
+              { ...req.query, hubSecret },
               origin(req),
             ),
           )
         })
         .get('/authenticated', (req, res) => {
-          const {hubSecret, receiver, ...state} = JSON.parse(req.query.state)
+          const { hubSecret, receiver, ...state } = JSON.parse(req.query.state)
           if (!secrets.delete(hubSecret)) return res.sendStatus(401)
           const code = crypto.randomUUID()
           secrets.set(code, req.query)
           res.redirect(
-            (receiver || `/${name}/redeem`) + '?' + encode({...state, code}),
+            (receiver || `/${name}/redeem`) + '?' + encode({ ...state, code }),
           )
         })
         .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))
@@ -130,7 +133,7 @@ if (hubUrl) {
           const payload = await provider.getPayload(query)
           res.json({
             ...payload,
-            ...(req.query.jwt && {jwt: await sign(payload)}),
+            ...(req.query.jwt && { jwt: await sign(payload) }),
           })
         })
         .get('/verify', verify),

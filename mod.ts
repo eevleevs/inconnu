@@ -5,6 +5,7 @@ import { getCookies } from 'https://deno.land/std@0.153.0/http/cookie.ts'
 import { encode } from 'https://deno.land/std@0.153.0/node/querystring.ts'
 import {
   generateSecret,
+  importJWK,
   JWTPayload,
   jwtVerify,
   SignJWT,
@@ -26,11 +27,18 @@ export interface Provider {
 const app = opine()
 const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') ?? '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
-const jwk = await generateSecret('HS256')
 const hostname = Deno.env.get('INCONNU_HOSTNAME')
 const port = 3001
 const secrets = new ExpiringMap(300000)
 const usernameFilter = Deno.env.get('INCONNU_USERNAME_FILTER') ?? ''
+
+/// to generate a static JWK
+// import { generateSecret, exportJWK } from 'jose';
+// JSON.stringify(await exportJWK(await generateSecret('HS256', { extractable: true })))
+
+const JWK = Deno.env.get('INCONNU_JWK')
+const jwk =
+  await (JWK ? importJWK(JSON.parse(JWK), 'HS256') : generateSecret('HS256'))
 
 // common functions
 const origin = (req: OpineRequest) =>

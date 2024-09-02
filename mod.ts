@@ -27,6 +27,7 @@ const app = opine()
 const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') || '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
 const jwk = await generateSecret('HS256')
+const hostname = Deno.env.get('INCONNU_HOSTNAME')
 const port = 3001
 const secrets = new ExpiringMap(300000)
 
@@ -146,5 +147,5 @@ if (hubUrl) {
 app
   .get('/', (_req, res) => res.redirect('https://github.com/eevleevs/inconnu'))
   .get('/verify', verify)
-  .listen(port)
+  .listen({ hostname, port })
 console.log('listening on port ' + port)

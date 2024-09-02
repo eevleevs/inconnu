@@ -24,12 +24,13 @@ export interface Provider {
 }
 
 const app = opine()
-const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') || '1w'
+const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') ?? '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
 const jwk = await generateSecret('HS256')
 const hostname = Deno.env.get('INCONNU_HOSTNAME')
 const port = 3001
 const secrets = new ExpiringMap(300000)
+const usernameFilter = Deno.env.get('INCONNU_USERNAME_FILTER') ?? ''
 
 // common functions
 const origin = (req: OpineRequest) =>
@@ -144,8 +145,11 @@ if (hubUrl) {
         .get('/redeem', async (req, res) => {
           setCors(res)
           const query = secrets.pop(req.query.code)
-          if (!query) return res.sendStatus(401)
+          if (!query) return res.sendStatus(404)
           const payload = await provider.getPayload(query)
+          if (!(payload.username as string)?.match(usernameFilter)) {
+            return res.sendStatus(401)
+          }
           res.json({
             ...payload,
             ...(req.query.jwt && { jwt: await sign(payload) }),

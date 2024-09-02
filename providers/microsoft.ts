@@ -1,4 +1,4 @@
-import { ConfidentialClientApplication } from 'https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts'
+import { ConfidentialClientApplication } from 'https://denopkg.com/josh-hemphill/azure-msal-deno@master/mod.ts'
 import { Provider } from '../mod.ts'
 
 class CustomClientApplication extends ConfidentialClientApplication {

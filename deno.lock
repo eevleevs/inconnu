@@ -1,5 +1,16 @@
 {
   "version": "3",
+  "packages": {
+    "specifiers": {
+      "npm:@types/node": "npm:@types/node@18.16.19"
+    },
+    "npm": {
+      "@types/node@18.16.19": {
+        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
+        "dependencies": {}
+      }
+    }
+  },
   "remote": {
     "https://cdn.skypack.dev/-/call-bind@v1.0.2-aQhc5rw7D717dqak1kKd/dist=es2019,mode=imports/optimized/call-bind/callBound.js": "1c071462cf0f8435ec0128420b848962c98a02bba04b9a66d487c6c2dedc8c75",
     "https://cdn.skypack.dev/-/call-bind@v1.0.2-aQhc5rw7D717dqak1kKd/dist=es2019,mode=imports/optimized/common/index-46ba46fb.js": "375f19372451f01406891804e68e5297427ffd2cc1dc414ba2acc570657633fd",
@@ -254,6 +265,8 @@
     "https://deno.land/std@0.99.0/path/win32.ts": "77f7b3604e0de40f3a7c698e8a79e7f601dc187035a1c21cb1e596666ce112f8",
     "https://deno.land/x/accepts@2.1.1/deps.ts": "ede05e17882d2e064ecfdfc407c95692cee7b49afe59e31d5f385ff74d262756",
     "https://deno.land/x/accepts@2.1.1/mod.ts": "ae058b80ba4e560ca9bd1eb4a488f5d6aeed9437fa192bc4903764fa653032cf",
+    "https://deno.land/x/azure_msal_deno@v1.1.0/dist/index.js": "5bad7125d38a346d2fa3218dba750e34a4cb3e251250dddf4ac7040ac6b4582a",
+    "https://deno.land/x/azure_msal_deno@v1.1.0/mod.ts": "9b9304d86c03e75cd9ee19b429b875264fe31820e51ea1e64298fec0abc99516",
     "https://deno.land/x/compress@v0.4.1/deps.ts": "b23619920334f637497a5a236e40ec259707463fdc3692fdb375b6399fc0280a",
     "https://deno.land/x/compress@v0.4.1/gzip/gzip.ts": "4bf22e9cd3368332928324dd9443ef72cabd05e9234e5a37dd7b3517d50e945e",
     "https://deno.land/x/compress@v0.4.1/gzip/gzip_file.ts": "b044ec0df4266c084baa033a4ab5394882e44a86d09d5616636467dcb39c671d",
@@ -261,6 +274,7 @@
     "https://deno.land/x/compress@v0.4.1/gzip/mod.ts": "4ade8edbe01b54a84f289351e137ebdfc040a74cd616636770cf1724fbf522d1",
     "https://deno.land/x/compress@v0.4.1/gzip/writer_gunzip.ts": "5aba34394820b835c414048ac2e15f52d443f1f773ebe61fd2517c938572d616",
     "https://deno.land/x/compress@v0.4.1/gzip/writer_gzip.ts": "c7aad0c51ab4f5952c068088186339cfc79a2ee1e057d6e16731b1175f342645",
+    "https://deno.land/x/compress@v0.4.1/interface.ts": "5d3636081ce866fd65a3d2f38a16ef88de229eda76c42193dd99593b1c59bff3",
     "https://deno.land/x/compress@v0.4.1/mod.ts": "ae8b15826334021583a5bd1978c63840f85156ea3635f5941bfc6733aad247e5",
     "https://deno.land/x/compress@v0.4.1/tar/mod.ts": "0f228fb67ef5e908dafbefd3e81890f6ca7b3dc6dd3245f88c5d22fde1ce7e2e",
     "https://deno.land/x/compress@v0.4.1/tgz/mod.ts": "397620ab5228b8df53a44f2ba1228bcac61e5ded44cbd89b7d4a3e2220583fae",
@@ -375,6 +389,7 @@
     "https://deno.land/x/negotiator@1.0.1/src/encoding.ts": "bd3e980c10de08798192cd56f1913e0c9f9be2b56391d7b4213f448cc94a0140",
     "https://deno.land/x/negotiator@1.0.1/src/language.ts": "bd822581a7621bbe8c3157d38b4f1ec5a35d75eb58bf6be927d477d929e689a2",
     "https://deno.land/x/negotiator@1.0.1/src/media_type.ts": "bde7a0f6a276fdb3b72569832ca6050ce5bcacad9d493029239af768bd06149f",
+    "https://deno.land/x/negotiator@1.0.1/src/types.ts": "3f2a779b3432bd5e2942965f326d82962e7e9b7a72b30fd81aeb0128f898303d",
     "https://deno.land/x/opine@2.3.3/deps.ts": "473099f2933adee49552faf771b88192f035fa08143cf41bc9cbeff76faac180",
     "https://deno.land/x/opine@2.3.3/mod.ts": "4a86c9efd9f0f556578b396fee87657be7f705da057442ed46722cd6c4ac7180",
     "https://deno.land/x/opine@2.3.3/src/application.ts": "4f3ef3f0cecaff8ce70e9aff2f53914da84dbe7c0a0603181f422214c4117172",
@@ -421,6 +436,8 @@
     "https://deno.land/x/vary@1.0.0/mod.ts": "e7c452694b21336419f16e0891f8ea503adaafc7bde956fb29e1a86f450a68e6",
     "https://denopkg.com/eevleevs/azure-msal-deno@master/dist/index.js": "485cb2e558e8181c9532b31b11fc7d26f7a9116d682226d9457756cc4d037365",
     "https://denopkg.com/eevleevs/azure-msal-deno@master/mod.ts": "9b9304d86c03e75cd9ee19b429b875264fe31820e51ea1e64298fec0abc99516",
+    "https://denopkg.com/josh-hemphill/azure-msal-deno@master/dist/index.js": "485cb2e558e8181c9532b31b11fc7d26f7a9116d682226d9457756cc4d037365",
+    "https://denopkg.com/josh-hemphill/azure-msal-deno@master/mod.ts": "9b9304d86c03e75cd9ee19b429b875264fe31820e51ea1e64298fec0abc99516",
     "https://raw.githubusercontent.com/jshttp/mime-db/v1.52.0/db.json": "85c8e1ba609079947c8df83c092900ab0226e1d7b60e5e7105fb7dd701833263"
   }
 }

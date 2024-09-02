@@ -34,12 +34,20 @@ const secrets = new ExpiringMap(300000)
 // common functions
 const origin = (req: OpineRequest) =>
   `http${req.get('host')?.match(/^localhost:/) ? '' : 's'}://${req.get('host')}`
+
 const sign = (payload: JWTPayload) =>
   new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime(expiration)
     .sign(jwk)
+
+const setCors = (res: OpineResponse) => {
+  res.set('Access-Control-Allow-Origin', '*')
+  res.set('Access-Control-Allow-Headers', 'Authorization')
+}
+
 const verify = (req: OpineRequest, res: OpineResponse) => {
+  setCors(res)
   const jwt = req.headers
     .get('authorization')
     ?.match(/^Bearer (\S+)/)
@@ -47,6 +55,11 @@ const verify = (req: OpineRequest, res: OpineResponse) => {
   jwtVerify(jwt, jwk)
     .then((result) => res.json(result.payload))
     .catch((err) => res.setStatus(401).send(err))
+}
+
+const verifyOptions = (req: OpineRequest, res: OpineResponse) => {
+  setCors(res)
+  res.sendStatus(204) // No Content
 }
 
 // method and route logging
@@ -129,6 +142,7 @@ if (hubUrl) {
         })
         .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))
         .get('/redeem', async (req, res) => {
+          setCors(res)
           const query = secrets.pop(req.query.code)
           if (!query) return res.sendStatus(401)
           const payload = await provider.getPayload(query)
@@ -137,7 +151,8 @@ if (hubUrl) {
             ...(req.query.jwt && { jwt: await sign(payload) }),
           })
         })
-        .get('/verify', verify),
+        .get('/verify', verify)
+        .options('/verify', verifyOptions),
     )
   }
   console.log('hub mode, using ' + names.join(', '))
@@ -147,5 +162,6 @@ if (hubUrl) {
 app
   .get('/', (_req, res) => res.redirect('https://github.com/eevleevs/inconnu'))
   .get('/verify', verify)
+  .options('/verify', verifyOptions)
   .listen({ hostname, port })
 console.log('listening on port ' + port)

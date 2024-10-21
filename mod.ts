@@ -1,21 +1,7 @@
-if ('readTextFileSync' in Deno) {
-  await import('https://deno.land/std@0.224.0/dotenv/load.ts')
-}
-import { getCookies } from 'https://deno.land/std@0.224.0/http/cookie.ts'
-import { encode } from 'node:querystring'
-import {
-  generateSecret,
-  importJWK,
-  JWTPayload,
-  jwtVerify,
-  SignJWT,
-} from 'https://deno.land/x/jose@v5.8.0/index.ts'
-import {
-  opine,
-  OpineRequest,
-  OpineResponse,
-  Router,
-} from 'https://deno.land/x/opine@2.3.4/mod.ts'
+import '@std/dotenv/load'
+import { getCookies } from '@std/http/cookie'
+import { generateSecret, importJWK, JWTPayload, jwtVerify, SignJWT } from 'jose'
+import { opine, OpineRequest, OpineResponse, Router } from 'opine'
 import { ExpiringMap } from 'https://deno.land/x/expiring_map@1.0.0/mod.ts'
 
 export interface Provider {
@@ -86,7 +72,7 @@ if (hubUrl) {
         secrets.set(satSecret, true)
         res.redirect(
           `${hubUrl}/authenticate?` +
-            encode({
+            new URLSearchParams({
               ...req.query,
               receiver: origin(req) + '/inconnu/authenticated',
               satSecret,
@@ -95,7 +81,9 @@ if (hubUrl) {
       })
       .get('/authenticated', async (req, res) => {
         if (!secrets.delete(req.query.satSecret)) return res.sendStatus(401)
-        const result = await fetch(`${hubUrl}/redeem?` + encode(req.query))
+        const result = await fetch(
+          `${hubUrl}/redeem?` + new URLSearchParams(req.query),
+        )
         if (!result.ok) return res.sendStatus(401)
         const jwt = await sign(await result.json())
         res.cookie({
@@ -144,7 +132,8 @@ if (hubUrl) {
           const code = crypto.randomUUID()
           secrets.set(code, req.query)
           res.redirect(
-            (receiver || `/${name}/redeem`) + '?' + encode({ ...state, code }),
+            (receiver || `/${name}/redeem`) + '?' +
+              new URLSearchParams({ ...state, code }),
           )
         })
         .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))

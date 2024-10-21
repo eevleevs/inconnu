@@ -2,7 +2,15 @@ import '@std/dotenv/load'
 import { getCookies } from '@std/http/cookie'
 import { generateSecret, importJWK, JWTPayload, jwtVerify, SignJWT } from 'jose'
 import { opine, OpineRequest, OpineResponse, Router } from 'opine'
-import { ExpiringMap } from 'https://deno.land/x/expiring_map@1.0.0/mod.ts'
+
+const kv = await Deno.openKv()
+
+async function kvPop(key: string[]) {
+  const value = await kv.get(key)
+  return (await kv.atomic().check(value).delete(key).commit()).ok
+    ? value.value
+    : null
+}
 
 export interface Provider {
   getAuthCodeUrl(query: object, origin: string): Promise<string>
@@ -16,7 +24,7 @@ const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') ?? '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
 const hostname = Deno.env.get('INCONNU_HOSTNAME') ?? '0.0.0.0'
 const port = 3001
-const secrets = new ExpiringMap(300000)
+const expireIn = 300000 // 5 minutes
 const usernameFilter = Deno.env.get('INCONNU_USERNAME_FILTER') ?? ''
 
 const JWK = Deno.env.get('INCONNU_JWK')
@@ -69,7 +77,7 @@ if (hubUrl) {
     new Router()
       .get('/authenticate', (req, res) => {
         const satSecret = crypto.randomUUID()
-        secrets.set(satSecret, true)
+        kv.set(['secrets', satSecret], true, { expireIn })
         res.redirect(
           `${hubUrl}/authenticate?` +
             new URLSearchParams({
@@ -80,7 +88,9 @@ if (hubUrl) {
         )
       })
       .get('/authenticated', async (req, res) => {
-        if (!secrets.delete(req.query.satSecret)) return res.sendStatus(401)
+        if (!await kvPop(['secrets', req.query.satSecret])) {
+          return res.sendStatus(401)
+        }
         const result = await fetch(
           `${hubUrl}/redeem?` + new URLSearchParams(req.query),
         )
@@ -118,7 +128,7 @@ if (hubUrl) {
       new Router()
         .get('/authenticate', async (req, res) => {
           const hubSecret = crypto.randomUUID()
-          secrets.set(hubSecret, true)
+          kv.set(['secrets', hubSecret], true, { expireIn })
           res.redirect(
             await provider.getAuthCodeUrl(
               { ...req.query, hubSecret },
@@ -126,11 +136,11 @@ if (hubUrl) {
             ),
           )
         })
-        .get('/authenticated', (req, res) => {
+        .get('/authenticated', async (req, res) => {
           const { hubSecret, receiver, ...state } = JSON.parse(req.query.state)
-          if (!secrets.delete(hubSecret)) return res.sendStatus(401)
+          if (!await kvPop(['secrets', hubSecret])) return res.sendStatus(401)
           const code = crypto.randomUUID()
-          secrets.set(code, req.query)
+          await kv.set(['secrets', code], req.query)
           res.redirect(
             (receiver || `/${name}/redeem`) + '?' +
               new URLSearchParams({ ...state, code }),
@@ -139,7 +149,7 @@ if (hubUrl) {
         .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))
         .get('/redeem', async (req, res) => {
           setCors(res)
-          const query = secrets.pop(req.query.code)
+          const query = await kvPop(['secrets', req.query.code])
           if (!query) return res.sendStatus(404)
           const payload = await provider.getPayload(query)
           if (!(payload.username as string)?.match(usernameFilter)) {

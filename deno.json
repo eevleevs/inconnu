@@ -6,5 +6,5 @@
     "jose": "https://deno.land/x/jose@v5.9.6/index.ts",
     "opine": "https://deno.land/x/opine@2.3.4/mod.ts"
   },
-  "tasks": { "start": "deno run -N mod.ts" }
+  "tasks": { "start": "deno run -IN mod.ts" }
 }

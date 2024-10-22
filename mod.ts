@@ -1,7 +1,7 @@
 import '@std/dotenv/load'
 import { getCookies } from '@std/http/cookie'
 import { generateSecret, importJWK, JWTPayload, jwtVerify, SignJWT } from 'jose'
-import { opine, OpineRequest, OpineResponse, Router } from 'opine'
+import express, { NextFunction, Request, Response, Router } from 'express'
 
 const kv = await Deno.openKv()
 
@@ -19,7 +19,7 @@ export interface Provider {
 }
 
 // configuration
-const app = opine()
+const app = express()
 const expiration = Deno.env.get('INCONNU_JWT_EXPIRATION') ?? '1w'
 const hubUrl = Deno.env.get('INCONNU_HUB_URL')
 const hostname = Deno.env.get('INCONNU_HOSTNAME') ?? '0.0.0.0'
@@ -32,7 +32,7 @@ const jwk =
   await (JWK ? importJWK(JSON.parse(JWK), 'HS256') : generateSecret('HS256'))
 
 // common functions
-const origin = (req: OpineRequest) =>
+const origin = (req: Request) =>
   `http${req.get('host')?.match(/^localhost:/) ? '' : 's'}://${req.get('host')}`
 
 const sign = (payload: JWTPayload) =>
@@ -41,15 +41,15 @@ const sign = (payload: JWTPayload) =>
     .setExpirationTime(expiration)
     .sign(jwk)
 
-const setCors = (res: OpineResponse) =>
+const setCors = (res: Response) =>
   res.set('Access-Control-Allow-Origin', '*')
     .set('Access-Control-Allow-Headers', 'Authorization')
     .set('Access-Control-Allow-Methods', 'GET, OPTIONS')
 
-const verify = (req: OpineRequest, res: OpineResponse) => {
+const verify = (req: Request, res: Response) => {
   setCors(res)
   const jwt = req.headers
-    .get('authorization')
+    ?.['authorization']
     ?.match(/^Bearer (\S+)/)
     ?.at(1) ?? getCookies(req.headers)['inconnu-auth']
   jwtVerify(jwt, jwk)
@@ -57,14 +57,14 @@ const verify = (req: OpineRequest, res: OpineResponse) => {
     .catch((err) => res.setStatus(401).send(err))
 }
 
-const verifyOptions = (req: OpineRequest, res: OpineResponse) => {
+const verifyOptions = (req: Request, res: Response) => {
   setCors(res)
   res.sendStatus(204) // No Content
 }
 
 // method and route logging
 if (Deno.env.get('INCONNU_LOG')) {
-  app.use((req, _res, next) => {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
     console.log(`${req.method} ${req.url}`)
     next()
   })
@@ -75,7 +75,7 @@ if (hubUrl) {
   app.use(
     Deno.env.get('INCONNU_SAT_PATH') || '/inconnu',
     new Router()
-      .get('/authenticate', (req, res) => {
+      .get('/authenticate', (req: Request, res: Response) => {
         const satSecret = crypto.randomUUID()
         kv.set(['secrets', satSecret], true, { expireIn })
         res.redirect(
@@ -87,7 +87,7 @@ if (hubUrl) {
             }),
         )
       })
-      .get('/authenticated', async (req, res) => {
+      .get('/authenticated', async (req: Request, res: Response) => {
         if (!await kvPop(['secrets', req.query.satSecret])) {
           return res.sendStatus(401)
         }
@@ -107,7 +107,7 @@ if (hubUrl) {
       })
       .get(
         '/logout',
-        (_req, res) =>
+        (_req: Request, res: Response) =>
           res.clearCookie('inconnu-auth').redirect(`${hubUrl}/logout`),
       )
       .get('/verify', verify)
@@ -126,7 +126,7 @@ if (hubUrl) {
     app.use(
       `/${name}`,
       new Router()
-        .get('/authenticate', async (req, res) => {
+        .get('/authenticate', async (req: Request, res: Response) => {
           const hubSecret = crypto.randomUUID()
           kv.set(['secrets', hubSecret], true, { expireIn })
           res.redirect(
@@ -136,7 +136,7 @@ if (hubUrl) {
             ),
           )
         })
-        .get('/authenticated', async (req, res) => {
+        .get('/authenticated', async (req: Request, res: Response) => {
           const { hubSecret, receiver, ...state } = JSON.parse(req.query.state)
           if (!await kvPop(['secrets', hubSecret])) return res.sendStatus(401)
           const code = crypto.randomUUID()
@@ -146,8 +146,12 @@ if (hubUrl) {
               new URLSearchParams({ ...state, code }),
           )
         })
-        .get('/logout', (_req, res) => res.redirect(provider.getLogoutUrl()))
-        .get('/redeem', async (req, res) => {
+        .get(
+          '/logout',
+          (_req: Request, res: Response) =>
+            res.redirect(provider.getLogoutUrl()),
+        )
+        .get('/redeem', async (req: Request, res: Response) => {
           setCors(res)
           const query = await kvPop(['secrets', req.query.code])
           if (!query) return res.sendStatus(404)

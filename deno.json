@@ -4,8 +4,8 @@
     "@azure/msal-node": "npm:@azure/msal-node@^2.15.0",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.2",
     "@std/http": "jsr:@std/http@^1.0.8",
-    "jose": "https://deno.land/x/jose@v5.9.6/index.ts",
-    "opine": "https://deno.land/x/opine@2.3.4/mod.ts"
+    "express": "npm:express@^4.21.1",
+    "jose": "https://deno.land/x/jose@v5.9.6/index.ts"
   },
-  "tasks": { "start": "deno run -IN mod.ts" }
+  "tasks": { "start": "deno run -EINR --unstable-kv --watch mod.ts" }
 }

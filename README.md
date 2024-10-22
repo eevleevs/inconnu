@@ -17,7 +17,7 @@ allowing to add further identity providers.
 
 ### Locally
 
-`deno run --allow-read --allow-env --allow-net mod.ts`
+`deno task start`
 
 ### In a container
 
